@@ -48,3 +48,25 @@ func UserControllerAdd(c *fiber.Ctx) error {
 		"data":    newUser,
 	})
 }
+
+func UserControllerGetById(c *fiber.Ctx) error {
+	var user []entity.User
+	id := c.Params("id")
+	if id == "" {
+		c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Id tidak boleh kosong",
+		})
+		return nil
+	}
+	if err := database.DB.Where("id=?", id).First(&user).Error; err != nil {
+		c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "data user tidak ditemukan",
+		})
+		return nil
+	}
+	//ketika data di temukan
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "berhasil mengambil data user",
+		"data":    user,
+	})
+}

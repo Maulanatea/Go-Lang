@@ -12,5 +12,5 @@ type User struct {
 	Email     string `json:"email"`
 	CreatedAt time.Time
 	UpdateAt  time.Time
-	DeleteAt  gorm.DeletedAt `gorm:"index"`
+	DeleteAt  gorm.DeletedAt `json:"-" gorm:"index, column:deleted_at"`
 }

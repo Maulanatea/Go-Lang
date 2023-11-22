@@ -8,5 +8,6 @@ import (
 
 func RouterApp(c *fiber.App) {
 	c.Get("/api/showall", controllers.UserControllerShow)
+	c.Get("/api/showallById/:id", controllers.UserControllerGetById)
 	c.Post("/api/create", controllers.UserControllerAdd)
 }
