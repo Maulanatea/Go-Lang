@@ -11,4 +11,5 @@ func RouterApp(c *fiber.App) {
 	c.Get("/api/showallById/:id", controllers.UserControllerGetById)
 	c.Post("/api/create", controllers.UserControllerAdd)
 	c.Put("/api/updateById/:id", controllers.UserControllerUpdate)
+	c.Delete("/api/delete/:id", controllers.UserControllerDelete)
 }

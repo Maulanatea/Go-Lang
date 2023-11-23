@@ -110,3 +110,26 @@ func UserControllerUpdate(c *fiber.Ctx) error {
 		"data":    user,
 	})
 }
+
+func UserControllerDelete(c *fiber.Ctx) error {
+	var user entity.User
+	id := c.Params("id")
+
+	//chek available user
+	err := database.DB.Debug().First(&user, "id=?", id).Error
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"message": "id tidak boleh kosong",
+		})
+	}
+
+	//delete data user
+	if err := database.DB.Debug().Delete(&user).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "internal server error",
+		})
+	}
+	return c.JSON(fiber.Map{
+		"message": "data berhasil di delete",
+	})
+}
