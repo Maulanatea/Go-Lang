@@ -16,6 +16,11 @@ func UserControllerShow(c *fiber.Ctx) error {
 	if err != nil {
 		log.Println(err)
 	}
+	//BISA JUGA MEMAKAI CODE DIBAWAH INI
+	// result := database.DB.Find(&user)
+	// if result.Error != nil {
+	// 	log.Println(result.Error)
+	// }
 	return c.JSON(user)
 }
 
@@ -67,6 +72,41 @@ func UserControllerGetById(c *fiber.Ctx) error {
 	//ketika data di temukan
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "berhasil mengambil data user",
+		"data":    user,
+	})
+}
+
+func UserControllerUpdate(c *fiber.Ctx) error {
+	userUP := new(req.UserUpdate)
+	if err := c.BodyParser(userUP); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "bad request",
+		})
+	}
+
+	var user entity.User
+
+	id := c.Params("id")
+	//cek available user
+	if err := database.DB.Where("id=?", id).First(&user).Error; err != nil {
+		c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "update gagal",
+		})
+		return nil
+	}
+	//update user data
+	if userUP.Name != "" {
+		user.Name = userUP.Name
+	}
+	user.Email = userUP.Email
+	err := database.DB.Save(&user).Error
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "failed to update user",
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "berhasil mengupdate data user",
 		"data":    user,
 	})
 }

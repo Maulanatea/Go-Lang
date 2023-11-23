@@ -9,8 +9,8 @@ import (
 )
 
 func main() {
-	database.ConnectDB()
-	migration.RunMigrate()
+	database.ConnectDB()   //initial database
+	migration.RunMigrate() //run migration
 	app := fiber.New()
 
 	routers.RouterApp(app)
