@@ -5,6 +5,7 @@ import (
 	"tutor-go-fiber/database"
 	"tutor-go-fiber/models/entity"
 	"tutor-go-fiber/models/req"
+	"tutor-go-fiber/utils"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -40,9 +41,19 @@ func UserControllerAdd(c *fiber.Ctx) error {
 	}
 
 	newUser := entity.User{
-		Name:  user.Name,
-		Email: user.Email,
+		Name:     user.Name,
+		Email:    user.Email,
+		Password: user.Password,
 	}
+	HashedPassword, err := utils.HashingPassword(user.Password)
+	if err != nil {
+		log.Println(err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "internal server error",
+		})
+	}
+	newUser.Password = HashedPassword
+
 	if err := database.DB.Create(&newUser).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Failed create new user",
