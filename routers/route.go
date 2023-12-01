@@ -15,4 +15,6 @@ func RouterApp(c *fiber.App) {
 	c.Post("/api/create", controllers.UserControllerAdd)                  //route untuk menambahkan data
 	c.Put("/api/updateById/:id", controllers.UserControllerUpdate)        //route untuk update data
 	c.Delete("/api/delete/:id", controllers.UserControllerDelete)         //route untuk menghapus data
+
+	c.Post("/api/bookCreate", controllers.BookControllerAdd)
 }
