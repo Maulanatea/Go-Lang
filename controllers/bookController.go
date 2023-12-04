@@ -21,36 +21,37 @@ func BookControllerAdd(c *fiber.Ctx) error {
 	validation := validator.New()
 	if err := validation.Struct(book); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "failed input user",
+			"message": "failed input book",
 			"error":   err.Error(),
 		})
 	}
 
-	//handle file
-	file, err := c.FormFile("cover")
-	if err != nil {
-		log.Println("error file = ", err)
-	}
+	//validation ketika tidak ada cover/image
+	var filenameString string
+	filenamE := c.Locals("filename")
+	log.Println("filename? = ", filenamE)
+	if filenamE == nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "image cover is required",
+		})
+	} else {
+		filenameString = fmt.Sprintf("%v", filenamE)
 
-	fileName := file.Filename
-	errSave := c.SaveFile(file, fmt.Sprintf("./public/covers/%s", fileName))
-	if errSave != nil {
-		log.Println("fail to store file into public/cover")
 	}
 
 	newBook := entity.Book{
 		Title:  book.Title,
 		Author: book.Author,
-		Cover:  fileName,
+		Cover:  filenameString,
 	}
 
 	if err := database.DB.Create(&newBook).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "Failed create new user",
+			"message": "Failed create new book",
 		})
 	}
 	return c.JSON(fiber.Map{
-		"message": "Succes create new user",
+		"message": "Succes create new book",
 		"data":    newBook,
 	})
 }

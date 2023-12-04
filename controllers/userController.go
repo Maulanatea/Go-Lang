@@ -123,8 +123,8 @@ func UserControllerUpdate(c *fiber.Ctx) error {
 }
 
 func UserControllerDelete(c *fiber.Ctx) error {
-	var user entity.User
 	id := c.Params("id")
+	var user entity.User
 
 	//chek available user
 	err := database.DB.Debug().First(&user, "id=?", id).Error
