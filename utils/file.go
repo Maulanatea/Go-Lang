@@ -39,6 +39,7 @@ func Singlefile(c *fiber.Ctx) error {
 
 func MultipleFile(c *fiber.Ctx) error {
 	form, errForm := c.MultipartForm()
+	fmt.Println("keluarnya", form)
 	if errForm != nil {
 		log.Println("error read multipart form, error = ", errForm)
 	}
