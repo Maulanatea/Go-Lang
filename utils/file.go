@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -20,7 +21,10 @@ func Singlefile(c *fiber.Ctx) error {
 	var fileName *string
 	if file != nil {
 		fileName = &file.Filename
-		errSave := c.SaveFile(file, fmt.Sprintf("./public/covers/%s", *fileName))
+		extenstionFile := filepath.Ext(*fileName)
+		customFilename := fmt.Sprintf("gambar satu%s", extenstionFile)
+
+		errSave := c.SaveFile(file, fmt.Sprintf("./public/covers/%s", customFilename))
 		if errSave != nil {
 			log.Println("fail to store file into public/cover")
 		}
