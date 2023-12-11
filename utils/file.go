@@ -1,8 +1,10 @@
 package utils
 
 import (
+	"errors"
 	"fmt"
 	"log"
+	"mime/multipart"
 	"os"
 	"path/filepath"
 
@@ -20,6 +22,13 @@ func Singlefile(c *fiber.Ctx) error {
 
 	var fileName *string
 	if file != nil {
+		err := checkContentType(file, "image/png", "image/jpeg")
+		if err != nil {
+			return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
+				"message": err.Error(),
+			})
+		}
+
 		fileName = &file.Filename
 		extenstionFile := filepath.Ext(*fileName)
 		customFilename := fmt.Sprintf("gambar satu%s", extenstionFile)
@@ -28,6 +37,7 @@ func Singlefile(c *fiber.Ctx) error {
 		if errSave != nil {
 			log.Println("fail to store file into public/cover")
 		}
+
 	} else {
 		log.Println("tidak ada cover yg di updload")
 	}
@@ -90,4 +100,20 @@ func RemoveFile(filename string, path ...string) error {
 	}
 
 	return nil
+}
+
+func checkContentType(files *multipart.FileHeader, contentTypes ...string) error {
+	if len(contentTypes) > 0 {
+		for _, contentType := range contentTypes {
+			contentTypeFile := files.Header.Get("Content-type")
+			log.Println("content type", contentTypeFile)
+			if contentTypeFile == contentType {
+				return nil
+
+			}
+		}
+		return errors.New("not allowed file type")
+	} else {
+		return errors.New("note found content type to be checking")
+	}
 }
